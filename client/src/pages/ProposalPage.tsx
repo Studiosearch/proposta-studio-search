@@ -7,12 +7,13 @@ import { translations } from "@/lib/translations";
 
 export default function ProposalPage() {
   const params = useParams();
-  const [data, setData] = useState<(PersonalizationState & { formattedTotal: string }) | null>(null);
-  const [loading, setLoading] = useState(!!params.id);
+  const idValue = params.id || params.slug;
+  const [data, setData] = useState<(PersonalizationState & { formattedTotal: string; totalValue: number; id?: string }) | null>(null);
+  const [loading, setLoading] = useState(!!idValue);
 
   useEffect(() => {
-    if (params.id) {
-      fetch(`/api/proposals/${params.id}`)
+    if (idValue) {
+      fetch(`/api/proposals/${idValue}`)
         .then((res) => res.json())
         .then((json) => {
           setData(json);
@@ -20,7 +21,7 @@ export default function ProposalPage() {
         })
         .catch(() => setLoading(false));
     }
-  }, [params.id]);
+  }, [idValue]);
 
   if (loading) {
     return (
@@ -52,16 +53,9 @@ export default function ProposalPage() {
   return (
     <div className="min-h-screen bg-[#f3efe9]">
       <div className="mx-auto flex max-w-[1120px] items-center justify-between px-4 pb-0 pt-4 md:px-6 md:pt-6">
-        <a
-          href="/"
-          className="inline-flex items-center gap-2 rounded-full border border-[#1f2328] bg-white px-5 py-3 text-[0.7rem] uppercase tracking-[0.18em] text-[#1f2328] transition hover:bg-[#1f2328] hover:text-white"
-        >
-          <ArrowLeft className="size-4" />
-          {translations[data.language].sidebar.title}
-        </a>
-
+        <div></div>
         <p className="hidden text-[0.7rem] uppercase tracking-[0.18em] text-black/40 md:block">
-           Studio Search · {data.id || "shared"}
+           Studio Search · {data.clientName || "Proposta"}
         </p>
       </div>
 

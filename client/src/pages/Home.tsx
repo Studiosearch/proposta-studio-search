@@ -22,7 +22,8 @@ export default function Home() {
         body: JSON.stringify(p),
       });
       const data = await response.json();
-      const shareUrl = `${window.location.origin}/view/${data.id}`;
+      const slugName = p.clientName ? p.clientName.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'cliente';
+      const shareUrl = `${window.location.origin}/proposta/${slugName}/${data.id}`;
       await navigator.clipboard.writeText(shareUrl);
       alert(`Link da proposta gerado e copiado: ${shareUrl}`);
     } catch (err) {

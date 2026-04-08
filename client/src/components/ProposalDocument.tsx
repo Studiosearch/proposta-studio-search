@@ -43,9 +43,6 @@ export default function ProposalDocument({ personalization: p, standalone = fals
                   <br />
                   <span contentEditable suppressContentEditableWarning className="outline-none focus:text-[#c8ff1a] text-[#c8ff1a] opacity-90">{t.direction}</span>
                 </h1>
-                <p contentEditable suppressContentEditableWarning className="mt-10 max-w-[530px] text-lg font-light leading-8 text-white/50 outline-none">
-                  {t.readyToPersonalize}
-                </p>
               </div>
 
               <div className="mt-auto grid gap-5 pt-10 md:grid-cols-[1fr_auto] md:items-end">

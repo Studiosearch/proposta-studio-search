@@ -26,7 +26,6 @@ export default function ProposalDocument({ personalization: p, standalone = fals
           {/* Header & Cover */}
           <section className="relative overflow-hidden rounded-[34px] bg-[#212429] text-white shadow-[0_30px_100px_rgba(16,18,22,0.24)] min-h-[720px] print:rounded-none print:shadow-none">
             <div className="absolute inset-0 bg-[#212429]" />
-            <div className="absolute left-0 top-[78%] h-[1px] w-[120px] bg-[#c8ff1a] shadow-[0_0_18px_2px_rgba(200,255,26,0.4)]" />
 
             <div className="relative z-10 flex h-full min-h-[720px] flex-col px-8 py-8 md:px-12 md:py-10">
               <div className="flex items-start justify-between gap-4">

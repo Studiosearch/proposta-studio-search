@@ -22,7 +22,7 @@ const initialState: PersonalizationState = {
   services: [],
   serviceValues: {},
   entryValue: 0,
-  paymentCondition: "À vista",
+  paymentCondition: "Proposta válida por 15 dias",
   installments: 1,
   notes: "",
 };

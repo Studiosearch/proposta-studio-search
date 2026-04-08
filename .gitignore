@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+proposals_db.json
+.manus-logs
+.vite
+.vercel
+package-lock.json
+pnpm-lock.yaml

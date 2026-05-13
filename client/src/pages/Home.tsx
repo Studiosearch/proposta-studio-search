@@ -19,7 +19,7 @@ export default function Home() {
   const handleShare = async () => {
     try {
       const overrides = Array.from(document.querySelectorAll('[contentEditable]')).map(el => el.textContent || "");
-      const dataToSave = { ...p, customOverridesList: overrides };
+      const dataToSave = { ...p, customOverridesList: overrides, createdAt: Date.now() };
 
       const id = nanoid(10);
       const { error } = await supabase

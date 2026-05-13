@@ -74,6 +74,45 @@ export default function ProposalPage() {
     );
   }
 
+  if (data) {
+    const FIFTEEN_DAYS = 15 * 24 * 60 * 60 * 1000;
+    let isExpired = false;
+    
+    if ((data as any).createdAt) {
+      isExpired = Date.now() - (data as any).createdAt > FIFTEEN_DAYS;
+    } else if (data.date) {
+      const parts = data.date.split('/');
+      if (parts.length === 3) {
+        const [day, month, year] = parts.map(Number);
+        const dateObj = new Date(year, month - 1, day);
+        if (!isNaN(dateObj.getTime())) {
+          isExpired = Date.now() - dateObj.getTime() > FIFTEEN_DAYS;
+        }
+      }
+    }
+
+    if (isExpired) {
+      return (
+        <div className="min-h-screen bg-[#f3efe9] flex flex-col items-center justify-center gap-6 px-4 text-center">
+          <div className="max-w-md bg-white text-black p-12 rounded-[34px] shadow-sm border border-black/5">
+            <h1 className="text-[2rem] font-extralight tracking-tight mb-4">Sua proposta expirou</h1>
+            <p className="text-black/60 font-light leading-relaxed mb-8 text-[0.95rem]">
+              O prazo de validade de 15 dias desta proposta chegou ao fim. Por favor, entre em contato conosco para atualizarmos as condições.
+            </p>
+            <a 
+              href="https://wa.me/5511997711480" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center w-full gap-3 bg-[#c8ff1a] hover:bg-[#d9ff4d] text-black font-semibold px-8 py-4 rounded-2xl transition duration-300 tracking-wider text-sm uppercase"
+            >
+              Falar no WhatsApp
+            </a>
+          </div>
+        </div>
+      );
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#f3efe9]">
       <div className="mx-auto flex max-w-[1120px] items-center justify-between px-4 pb-0 pt-4 md:px-6 md:pt-6">

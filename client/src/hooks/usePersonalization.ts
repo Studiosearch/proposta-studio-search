@@ -12,6 +12,7 @@ export type PersonalizationState = {
   paymentCondition: string;
   installments: number;
   notes: string;
+  customOverrides: Record<string, string>;
 };
 
 const initialState: PersonalizationState = {
@@ -25,6 +26,7 @@ const initialState: PersonalizationState = {
   paymentCondition: "Proposta válida por 15 dias",
   installments: 1,
   notes: "",
+  customOverrides: {},
 };
 
 import { serviceModules } from "../lib/proposals";
@@ -63,6 +65,13 @@ export function usePersonalization() {
     }));
   }, []);
 
+  const updateOverride = useCallback((key: string, value: string) => {
+    setState((prev: PersonalizationState) => ({
+      ...prev,
+      customOverrides: { ...(prev.customOverrides || {}), [key]: value },
+    }));
+  }, []);
+
   const totalValue = state.services.reduce(
     (acc: number, id: string) => {
       const mod = serviceModules.find(m => m.id === id);
@@ -90,5 +99,6 @@ export function usePersonalization() {
     updateField,
     toggleService,
     updateServiceValue,
+    updateOverride,
   };
 }

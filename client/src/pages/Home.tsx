@@ -18,10 +18,13 @@ export default function Home() {
 
   const handleShare = async () => {
     try {
+      const overrides = Array.from(document.querySelectorAll('[contentEditable]')).map(el => el.textContent || "");
+      const dataToSave = { ...p, customOverridesList: overrides };
+
       const id = nanoid(10);
       const { error } = await supabase
         .from("proposals")
-        .insert([{ id, data: p }]);
+        .insert([{ id, data: dataToSave }]);
 
       if (error) {
         throw new Error("Erro ao salvar no banco de dados: " + error.message);

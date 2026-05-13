@@ -31,6 +31,22 @@ export default function ProposalPage() {
     }
   }, [idValue]);
 
+  useEffect(() => {
+    if (data && 'customOverridesList' in data) {
+      const overrides = (data as any).customOverridesList as string[];
+      if (overrides && overrides.length > 0) {
+        setTimeout(() => {
+          const editables = document.querySelectorAll('[contentEditable]');
+          overrides.forEach((text, i) => {
+            if (editables[i] && text) {
+              editables[i].textContent = text;
+            }
+          });
+        }, 100); // small delay to ensure DOM is fully painted
+      }
+    }
+  }, [data]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#f3efe9] flex items-center justify-center">

@@ -18,10 +18,6 @@ export default function Home() {
 
   const handleShare = async () => {
     try {
-      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-        throw new Error("Configuração do banco de dados pendente.");
-      }
-
       const id = nanoid(10);
       const { error } = await supabase
         .from("proposals")

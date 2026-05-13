@@ -14,11 +14,6 @@ export default function ProposalPage() {
 
   useEffect(() => {
     if (idValue) {
-      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-        setLoading(false);
-        return;
-      }
-
       supabase
         .from("proposals")
         .select("data")

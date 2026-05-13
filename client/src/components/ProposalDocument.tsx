@@ -49,7 +49,7 @@ export default function ProposalDocument({ personalization: p, standalone = fals
                   <p className="text-sm font-light tracking-[0.06em] text-white/40">{p.date} · {p.clientName}</p>
                   <div className="flex flex-wrap gap-2 max-w-[600px]">
                     {selectedModules.map((m) => (
-                      <span key={m.id} className="inline-flex rounded-full border border-white/12 bg-white/6 px-4 py-2 text-[0.68rem] uppercase tracking-[0.18em] text-white/70 backdrop-blur-md">
+                      <span key={m.id} contentEditable suppressContentEditableWarning className="inline-flex rounded-full border border-white/12 bg-white/6 px-4 py-2 text-[0.68rem] uppercase tracking-[0.18em] text-white/70 backdrop-blur-md outline-none">
                         {m.title[p.language]}
                       </span>
                     ))}
@@ -80,7 +80,7 @@ export default function ProposalDocument({ personalization: p, standalone = fals
                 </p>
                 <div className="mt-10 flex flex-wrap gap-3">
                   {selectedModules.map(m => (
-                    <span key={m.id} className="rounded-full border border-black/10 bg-white/50 px-5 py-2 text-[0.7rem] uppercase tracking-widest text-black/60 backdrop-blur-sm">
+                    <span key={m.id} contentEditable suppressContentEditableWarning className="rounded-full border border-black/10 bg-white/50 px-5 py-2 text-[0.7rem] uppercase tracking-widest text-black/60 backdrop-blur-sm outline-none">
                       {m.title[p.language]}
                     </span>
                   ))}
@@ -95,10 +95,10 @@ export default function ProposalDocument({ personalization: p, standalone = fals
                 <section key={m.id} className="relative overflow-hidden rounded-[34px] border border-black/8 bg-[#f5f2ed] p-8 md:p-12 shadow-sm print:rounded-none print:break-before-page">
                    <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
                       <div>
-                        <p className="text-[0.65rem] uppercase tracking-[0.3em] text-black/40 mb-3">{t.solutionProposed}</p>
+                        <p contentEditable suppressContentEditableWarning className="text-[0.65rem] uppercase tracking-[0.3em] text-black/40 mb-3 outline-none">{t.solutionProposed}</p>
                         <div className="flex items-center gap-3 mb-6">
                            <h3 contentEditable suppressContentEditableWarning className="text-[2.2rem] font-extralight leading-none tracking-tighter text-black outline-none">{m.title[p.language]}</h3>
-                           <span className={`px-3 py-1 rounded-full text-[0.6rem] uppercase tracking-wider font-medium ${m.isRecurring ? "bg-[#c8ff1a]/20 text-black/70" : "bg-black/5 text-black/40"}`}>
+                           <span contentEditable suppressContentEditableWarning className={`px-3 py-1 rounded-full text-[0.6rem] uppercase tracking-wider font-medium outline-none ${m.isRecurring ? "bg-[#c8ff1a]/20 text-black/70" : "bg-black/5 text-black/40"}`}>
                              {m.isRecurring ? (p.language === 'pt' ? 'Mensal' : 'Mensile') : (p.language === 'pt' ? 'Projeto' : 'Progetto')}
                            </span>
                         </div>
@@ -106,10 +106,10 @@ export default function ProposalDocument({ personalization: p, standalone = fals
                         
                         {!m.isRecurring && (
                           <div className="mt-8 pt-8 border-t border-black/5">
-                             <p className="text-[0.6rem] uppercase tracking-widest text-black/30 mb-1">
+                             <p contentEditable suppressContentEditableWarning className="text-[0.6rem] uppercase tracking-widest text-black/30 mb-1 outline-none">
                                {p.language === 'pt' ? 'Investimento do Projeto' : 'Investimento del Progetto'}
                              </p>
-                             <p className="text-2xl font-light text-black/80">
+                             <p contentEditable suppressContentEditableWarning className="text-2xl font-light text-black/80 outline-none">
                                {new Intl.NumberFormat(p.language === 'pt' ? 'pt-BR' : 'it-IT', { style: 'currency', currency: p.currency === 'BRL' ? 'BRL' : 'EUR' }).format(p.serviceValues[m.id] || 0)}
                              </p>
                           </div>

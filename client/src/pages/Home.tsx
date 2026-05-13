@@ -3,6 +3,8 @@ import { translations } from "@/lib/translations";
 import { serviceModules } from "@/lib/proposals";
 import ProposalDocument from "@/components/ProposalDocument";
 import { Globe, User, Briefcase, CreditCard, Download, Share2 } from "lucide-react";
+import { nanoid } from "nanoid";
+import { supabase } from "@/lib/supabase";
 
 import logoImg from "@/assets/logo.png";
 
@@ -16,22 +18,26 @@ export default function Home() {
 
   const handleShare = async () => {
     try {
-      const response = await fetch("/api/proposals", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(p),
-      });
-      const data = await response.json();
-      if (!response.ok || data.error) {
-        throw new Error(data.error || "Failed to save proposal");
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error("Configuração do banco de dados pendente.");
       }
+
+      const id = nanoid(10);
+      const { error } = await supabase
+        .from("proposals")
+        .insert([{ id, data: p }]);
+
+      if (error) {
+        throw new Error("Erro ao salvar no banco de dados: " + error.message);
+      }
+
       const slugName = p.clientName ? p.clientName.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'cliente';
-      const shareUrl = `${window.location.origin}/proposta/${slugName}/${data.id}`;
+      const shareUrl = `${window.location.origin}/proposta/${slugName}/${id}`;
       await navigator.clipboard.writeText(shareUrl);
       alert(`Link da proposta gerado e copiado: ${shareUrl}`);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Erro ao gerar link de compartilhamento");
+      alert(err.message || "Erro ao gerar link de compartilhamento");
     }
   };
 

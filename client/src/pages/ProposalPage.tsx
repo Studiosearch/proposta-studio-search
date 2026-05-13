@@ -4,6 +4,7 @@ import ProposalDocument from "@/components/ProposalDocument";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import type { PersonalizationState } from "@/hooks/usePersonalization";
 import { translations } from "@/lib/translations";
+import { supabase } from "@/lib/supabase";
 
 export default function ProposalPage() {
   const params = useParams();
@@ -13,13 +14,21 @@ export default function ProposalPage() {
 
   useEffect(() => {
     if (idValue) {
-      fetch(`/api/proposals/${idValue}`)
-        .then(async (res) => {
-          const json = await res.json();
-          if (!res.ok || json.error) {
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        setLoading(false);
+        return;
+      }
+
+      supabase
+        .from("proposals")
+        .select("data")
+        .eq("id", idValue)
+        .single()
+        .then(({ data: proposalData, error }) => {
+          if (error || !proposalData) {
             setData(null);
           } else {
-            setData(json);
+            setData({ ...proposalData.data, id: idValue as string });
           }
           setLoading(false);
         })

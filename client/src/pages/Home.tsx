@@ -22,6 +22,9 @@ export default function Home() {
         body: JSON.stringify(p),
       });
       const data = await response.json();
+      if (!response.ok || data.error) {
+        throw new Error(data.error || "Failed to save proposal");
+      }
       const slugName = p.clientName ? p.clientName.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'cliente';
       const shareUrl = `${window.location.origin}/proposta/${slugName}/${data.id}`;
       await navigator.clipboard.writeText(shareUrl);

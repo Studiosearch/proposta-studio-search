@@ -14,9 +14,13 @@ export default function ProposalPage() {
   useEffect(() => {
     if (idValue) {
       fetch(`/api/proposals/${idValue}`)
-        .then((res) => res.json())
-        .then((json) => {
-          setData(json);
+        .then(async (res) => {
+          const json = await res.json();
+          if (!res.ok || json.error) {
+            setData(null);
+          } else {
+            setData(json);
+          }
           setLoading(false);
         })
         .catch(() => setLoading(false));

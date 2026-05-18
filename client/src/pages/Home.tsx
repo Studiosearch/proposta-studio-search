@@ -167,9 +167,9 @@ export default function Home() {
                     <p className="text-[0.6rem] uppercase tracking-wider text-white/30 mb-2">Meses/Rec.</p>
                     <input 
                       type="number"
-                      min="1"
+                      min="0"
                       value={p.installments}
-                      onChange={(e) => p.updateField("installments", Math.max(1, Number(e.target.value)))}
+                      onChange={(e) => p.updateField("installments", Math.max(0, Number(e.target.value)))}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs focus:ring-1 focus:ring-[#c8ff1a] transition outline-none"
                     />
                   </div>

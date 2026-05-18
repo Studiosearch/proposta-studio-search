@@ -179,11 +179,17 @@ export default function ProposalDocument({ personalization: p, standalone = fals
                       <p className="text-[0.6rem] uppercase tracking-widest text-white/40 mb-1">
                         {p.language === 'pt' ? 'Serviços Mensais' : 'Servizi Mensili'} 
                       </p>
-                      <p className="text-xl font-light">
-                        {p.installments}x de {new Intl.NumberFormat(p.language === 'pt' ? 'pt-BR' : 'it-IT', { style: 'currency', currency: p.currency === 'BRL' ? 'BRL' : 'EUR' }).format(
-                          selectedModules.filter(m => m.isRecurring).reduce((acc, m) => acc + (p.serviceValues[m.id] || 0), 0)
-                        )}
-                      </p>
+                      {p.installments === 0 ? (
+                        <p className="text-sm font-light text-white/50 py-1">
+                          {p.language === 'pt' ? 'Não existem valores mensais' : 'Nessun costo mensile'}
+                        </p>
+                      ) : (
+                        <p className="text-xl font-light">
+                          {p.installments}x de {new Intl.NumberFormat(p.language === 'pt' ? 'pt-BR' : 'it-IT', { style: 'currency', currency: p.currency === 'BRL' ? 'BRL' : 'EUR' }).format(
+                            selectedModules.filter(m => m.isRecurring).reduce((acc, m) => acc + (p.serviceValues[m.id] || 0), 0) / p.installments
+                          )}
+                        </p>
+                      )}
                       <p className="text-[0.6rem] text-white/30 truncate mt-1">({selectedModules.filter(m => m.isRecurring).map(m => m.title[p.language]).join(", ")})</p>
                     </div>
                   </div>
@@ -201,14 +207,26 @@ export default function ProposalDocument({ personalization: p, standalone = fals
                  {t.closing}
                </p>
                
-               <a 
-                 href="https://wa.me/5511997711480" 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 className="inline-flex items-center gap-3 bg-[#c8ff1a] hover:bg-[#d9ff4d] text-black font-semibold px-10 py-5 rounded-2xl transition duration-300 group shadow-lg no-print"
-               >
-                 <span className="text-sm uppercase tracking-[0.15em]">{t.whatsapp}</span>
-               </a>
+               <div className="flex flex-wrap justify-center items-center gap-4">
+                 <a 
+                   href="https://wa.me/5511997711480" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="inline-flex items-center gap-3 bg-[#c8ff1a] hover:bg-[#d9ff4d] text-black font-semibold px-10 py-5 rounded-2xl transition duration-300 group shadow-lg no-print"
+                 >
+                   <span className="text-sm uppercase tracking-[0.15em]">{t.whatsapp}</span>
+                 </a>
+                 <a 
+                   href="https://studiosearch.com.br" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="inline-flex items-center gap-3 bg-white hover:bg-black/5 text-black border border-black/10 font-semibold px-10 py-5 rounded-2xl transition duration-300 group shadow-lg no-print"
+                 >
+                   <span className="text-sm uppercase tracking-[0.15em]">
+                     {p.language === 'pt' ? 'Conheça nossos trabalhos' : 'Scopri i nostri lavori'}
+                   </span>
+                 </a>
+               </div>
 
                <div className="mt-16 flex flex-wrap justify-center gap-8">
                   <div className="text-[0.6rem] uppercase tracking-[0.25em] text-black/40 font-medium">contato@studiosearch.com.br</div>

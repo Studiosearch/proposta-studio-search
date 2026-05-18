@@ -140,4 +140,38 @@ export const serviceModules: ServiceModule[] = [
       } 
     }]
   },
+  {
+    id: "visual-communication",
+    title: { pt: "Comunicação Visual", it: "Comunicazione Visiva" },
+    description: { 
+      pt: "Criação de materiais e peças de comunicação visual de alto impacto para PDV e mídias físicas.", 
+      it: "Creazione di materiali e pezzi di comunicazione visiva ad alto impatto per PDV e media fisici." 
+    },
+    isRecurring: false,
+    defaultPrice: 1800,
+    deliverables: [{ 
+      title: { pt: "Escopo de Trabalho", it: "Scopo del Lavoro" }, 
+      items: { 
+        pt: [
+          "Reunião de Briefing",
+          "24 designs para aplicação no PDV",
+          "Arquivos abertos em IA para edição",
+          "1 apresentação PDF",
+          "1 apresentação em PPT",
+          "Até 2 alterações por projeto",
+          "Entrega em 3 dias"
+        ], 
+        it: [
+          "Riunione di Briefing",
+          "24 design per applicazione nel PDV",
+          "File aperti in AI per modifiche",
+          "1 presentazione PDF",
+          "1 presentazione PPT",
+          "Fino a 2 modifiche per progetto",
+          "Consegna in 3 giorni"
+        ] 
+      } 
+    }]
+  },
 ];
+

@@ -77,7 +77,7 @@ export function usePersonalization() {
       const mod = serviceModules.find(m => m.id === id);
       const val = state.serviceValues[id] || 0;
       if (mod?.isRecurring) {
-        return acc + (val * state.installments);
+        return acc + (state.installments > 0 ? val : 0);
       }
       return acc + val;
     },

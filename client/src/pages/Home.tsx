@@ -21,15 +21,17 @@ export default function Home() {
       const overrides = Array.from(document.querySelectorAll('[contentEditable]')).map(el => el.textContent || "");
       const dataToSave = { ...p, customOverridesList: overrides, createdAt: Date.now() };
 
-      const id = nanoid(10);
-      const { error } = await supabase
-        .from("proposals")
-        .insert([{ id, data: dataToSave }]);
+      const response = await fetch('/api/proposals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSave)
+      });
 
-      if (error) {
-        console.error("Supabase error:", error);
-        throw new Error(`Erro ao salvar: ${error.message} (code: ${error.code})`);
+      if (!response.ok) {
+        throw new Error(`Erro no servidor: ${response.statusText}`);
       }
+
+      const { id } = await response.json();
 
       const slugName = p.clientName
         ? p.clientName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')

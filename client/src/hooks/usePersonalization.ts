@@ -72,17 +72,23 @@ export function usePersonalization() {
     }));
   }, []);
 
-  const totalValue = state.services.reduce(
-    (acc: number, id: string) => {
-      const mod = serviceModules.find(m => m.id === id);
-      const val = state.serviceValues[id] || 0;
-      if (mod?.isRecurring) {
-        return acc + (state.installments > 0 ? val : 0);
-      }
-      return acc + val;
-    },
-    0
-  );
+  // Serviços recorrentes (mensais) são multiplicados pelo nº de meses.
+  // Serviços pontuais são somados uma única vez.
+  const recurringTotal = state.services.reduce((acc: number, id: string) => {
+    const mod = serviceModules.find(m => m.id === id);
+    const val = state.serviceValues[id] || 0;
+    if (mod?.isRecurring) return acc + val;
+    return acc;
+  }, 0);
+
+  const onetimeTotal = state.services.reduce((acc: number, id: string) => {
+    const mod = serviceModules.find(m => m.id === id);
+    const val = state.serviceValues[id] || 0;
+    if (!mod?.isRecurring) return acc + val;
+    return acc;
+  }, 0);
+
+  const totalValue = onetimeTotal + recurringTotal * Math.max(1, state.installments);
 
   const formattedTotal = new Intl.NumberFormat(
     state.language === "pt" ? "pt-BR" : "it-IT",

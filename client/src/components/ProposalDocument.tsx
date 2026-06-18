@@ -186,7 +186,7 @@ export default function ProposalDocument({ personalization: p, standalone = fals
                       ) : (
                         <p className="text-xl font-light">
                           {p.installments}x de {new Intl.NumberFormat(p.language === 'pt' ? 'pt-BR' : 'it-IT', { style: 'currency', currency: p.currency === 'BRL' ? 'BRL' : 'EUR' }).format(
-                            selectedModules.filter(m => m.isRecurring).reduce((acc, m) => acc + (p.serviceValues[m.id] || 0), 0) / p.installments
+                            selectedModules.filter(m => m.isRecurring).reduce((acc, m) => acc + (p.serviceValues[m.id] || 0), 0)
                           )}
                         </p>
                       )}

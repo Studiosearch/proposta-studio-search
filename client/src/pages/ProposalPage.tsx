@@ -113,10 +113,58 @@ export default function ProposalPage() {
     }
   }
 
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!data?.id) return;
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('proposals')
+        .delete()
+        .eq('id', data.id);
+      if (error) throw error;
+      window.location.href = '/';
+    } catch (e) {
+      console.error(e);
+      setDeleting(false);
+      setShowConfirm(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f3efe9]">
       <div className="mx-auto flex max-w-[1120px] items-center justify-between px-4 pb-0 pt-4 md:px-6 md:pt-6">
-        <div></div>
+        {/* Botão admin imperceptivel - dot no canto */}
+        <div className="relative">
+          {!showConfirm ? (
+            <button
+              onClick={() => setShowConfirm(true)}
+              title=""
+              className="w-2 h-2 rounded-full bg-black/5 hover:bg-black/10 transition-colors duration-500 cursor-default"
+              style={{ outline: 'none', border: 'none' }}
+            />
+          ) : (
+            <div className="flex items-center gap-2 bg-black/5 backdrop-blur-sm rounded-xl px-3 py-1.5 animate-in fade-in duration-200">
+              <span className="text-[0.6rem] text-black/40 uppercase tracking-wider">Excluir proposta?</span>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="text-[0.6rem] text-red-500/70 hover:text-red-600 uppercase tracking-wider font-medium transition disabled:opacity-50"
+              >
+                {deleting ? '...' : 'Sim'}
+              </button>
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="text-[0.6rem] text-black/30 hover:text-black/50 uppercase tracking-wider transition"
+              >
+                Não
+              </button>
+            </div>
+          )}
+        </div>
+
         <p className="hidden text-[0.7rem] uppercase tracking-[0.18em] text-black/40 md:block">
            Studio Search · {data.clientName || "Proposta"}
         </p>

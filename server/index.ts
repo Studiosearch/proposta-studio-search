@@ -42,6 +42,22 @@ async function startServer() {
     }
   });
 
+  // API to delete proposal
+  app.delete("/api/proposals/:id", async (req, res) => {
+    try {
+      const { error } = await supabase
+        .from("proposals")
+        .delete()
+        .eq("id", req.params.id);
+
+      if (error) throw error;
+      res.json({ success: true });
+    } catch (err) {
+      console.error("Delete Error:", err);
+      res.status(500).json({ error: "Failed to delete proposal" });
+    }
+  });
+
   // API to get proposal
   app.get("/api/proposals/:id", async (req, res) => {
     try {

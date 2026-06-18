@@ -27,18 +27,28 @@ export default function Home() {
         .insert([{ id, data: dataToSave }]);
 
       if (error) {
-        throw new Error("Erro ao salvar no banco de dados: " + error.message);
+        console.error("Supabase error:", error);
+        throw new Error(`Erro ao salvar: ${error.message} (code: ${error.code})`);
       }
 
-      const slugName = p.clientName ? p.clientName.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'cliente';
+      const slugName = p.clientName
+        ? p.clientName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+        : 'cliente';
       const shareUrl = `${window.location.origin}/proposta/${slugName}/${id}`;
-      await navigator.clipboard.writeText(shareUrl);
-      alert(`Link da proposta gerado e copiado: ${shareUrl}`);
+
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        alert(`Link copiado:\n\n${shareUrl}`);
+      } catch {
+        // Fallback se clipboard nao estiver disponivel
+        prompt(`Copie o link abaixo:`, shareUrl);
+      }
     } catch (err: any) {
       console.error(err);
       alert(err.message || "Erro ao gerar link de compartilhamento");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-[#f3efe9]">

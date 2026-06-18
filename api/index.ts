@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 
 // API to save proposal
-app.post("/api/proposals", async (req, res) => {
+app.post(["/api/proposals", "/proposals", "/"], async (req, res) => {
   try {
     if (!supabaseUrl || !supabaseKey) {
       return res.status(500).json({ error: "Configuração do banco de dados pendente no Vercel." });
@@ -34,7 +34,7 @@ app.post("/api/proposals", async (req, res) => {
 });
 
 // API to get proposal
-app.get("/api/proposals/:id", async (req, res) => {
+app.get(["/api/proposals/:id", "/proposals/:id", "/:id"], async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("proposals")
@@ -51,7 +51,7 @@ app.get("/api/proposals/:id", async (req, res) => {
 });
 
 // API to delete proposal
-app.delete("/api/proposals/:id", async (req, res) => {
+app.delete(["/api/proposals/:id", "/proposals/:id", "/:id"], async (req, res) => {
   try {
     const { error } = await supabase
       .from("proposals")

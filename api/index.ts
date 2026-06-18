@@ -1,14 +1,6 @@
 import { nanoid } from "nanoid";
 import { createClient } from "@supabase/supabase-js";
-import type { IncomingMessage, ServerResponse } from "http";
-
-type VercelRequest = IncomingMessage & { body?: any; url?: string; method?: string; query?: Record<string, string | string[]> };
-type VercelResponse = ServerResponse & {
-  status: (code: number) => VercelResponse;
-  json: (data: any) => void;
-  setHeader: (name: string, value: string) => VercelResponse;
-  end: () => VercelResponse;
-};
+import { URL } from "url";
 
 // Supabase Setup
 const supabaseUrl =
@@ -19,8 +11,8 @@ const supabaseKey =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxdmh5dHhmYmR4bmFicXNmYXBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NzQ3MzAsImV4cCI6MjA5MTI1MDczMH0.vHGMG--KjBJvVAJMWQ65ywEAP_igSUmIFhO_k_KAIrs";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS headers
+export default async function handler(req: any, res: any) {
+  // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -29,30 +21,47 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
 
-  // Parse URL to extract route info
-  // Vercel rewrites /api/(.*) -> /api, so the original path comes in req.url
-  // req.url will be something like /api/proposals or /api/proposals/abc123
-  const url = req.url || "";
-  const pathParts = url.split("?")[0].split("/").filter(Boolean);
-  // pathParts examples:
-  //   /api/proposals       -> ["api", "proposals"]
-  //   /api/proposals/abc   -> ["api", "proposals", "abc"]
+  // Parse query params from the rewritten URL
+  // vercel.json sends: /api?resource=proposals&id=xxx
+  const parsedUrl = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
+  const resource = req.query?.resource || parsedUrl.searchParams.get("resource");
+  const resourceId = req.query?.id || parsedUrl.searchParams.get("id");
 
-  const resource = pathParts[1]; // "proposals"
-  const resourceId = pathParts[2]; // e.g. "abc123" or undefined
+  // Also try to extract from the URL path as fallback
+  // (when running locally or if rewrites don't work)
+  let finalResource = resource;
+  let finalId = resourceId;
+
+  if (!finalResource) {
+    const pathParts = (parsedUrl.pathname || "").split("/").filter(Boolean);
+    // /api/proposals/abc -> ["api", "proposals", "abc"]
+    if (pathParts[0] === "api") {
+      finalResource = pathParts[1];
+      finalId = pathParts[2] || finalId;
+    } else {
+      finalResource = pathParts[0];
+      finalId = pathParts[1] || finalId;
+    }
+  }
 
   // POST /api/proposals — Save a new proposal
-  if (req.method === "POST" && resource === "proposals" && !resourceId) {
+  if (req.method === "POST" && finalResource === "proposals" && !finalId) {
     try {
       const id = nanoid(10);
+      const body = req.body;
+
+      if (!body || typeof body !== "object") {
+        return res.status(400).json({ error: "Body da requisição inválido ou vazio" });
+      }
+
       const { error } = await supabase
         .from("proposals")
-        .insert([{ id, data: req.body }]);
+        .insert([{ id, data: body }]);
 
       if (error) {
         console.error("Supabase insert error:", JSON.stringify(error));
         return res.status(500).json({
-          error: `Erro ao salvar proposta: ${error.message || JSON.stringify(error)}`,
+          error: `Erro ao salvar no banco: ${error.message || JSON.stringify(error)}`,
         });
       }
 
@@ -66,19 +75,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // GET /api/proposals/:id — Load a proposal
-  if (req.method === "GET" && resource === "proposals" && resourceId) {
+  if (req.method === "GET" && finalResource === "proposals" && finalId) {
     try {
       const { data, error } = await supabase
         .from("proposals")
         .select("data")
-        .eq("id", resourceId)
+        .eq("id", finalId)
         .single();
 
       if (error || !data) {
         return res.status(404).json({ error: "Proposta não encontrada." });
       }
 
-      return res.status(200).json({ ...data.data, id: resourceId });
+      return res.status(200).json({ ...data.data, id: finalId });
     } catch (err: any) {
       console.error("Load Error:", err);
       return res.status(500).json({
@@ -88,12 +97,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // DELETE /api/proposals/:id — Delete a proposal
-  if (req.method === "DELETE" && resource === "proposals" && resourceId) {
+  if (req.method === "DELETE" && finalResource === "proposals" && finalId) {
     try {
       const { error } = await supabase
         .from("proposals")
         .delete()
-        .eq("id", resourceId);
+        .eq("id", finalId);
 
       if (error) {
         return res.status(500).json({
@@ -112,7 +121,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // Fallback — route not matched
   return res.status(404).json({
-    error: "Rota não encontrada",
-    debug: { method: req.method, url, pathParts },
+    error: "Rota da API não encontrada",
+    debug: { method: req.method, url: req.url, resource: finalResource, id: finalId },
   });
 }

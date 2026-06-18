@@ -27,11 +27,18 @@ export default function Home() {
         body: JSON.stringify(dataToSave)
       });
 
+      const responseData = await response.json().catch(() => null);
+
       if (!response.ok) {
-        throw new Error(`Erro no servidor: ${response.statusText}`);
+        const serverMsg = responseData?.error || response.statusText || `Status ${response.status}`;
+        throw new Error(`Erro no servidor: ${serverMsg}`);
       }
 
-      const { id } = await response.json();
+      if (!responseData?.id) {
+        throw new Error("Resposta do servidor sem ID da proposta");
+      }
+
+      const { id } = responseData;
 
       const slugName = p.clientName
         ? p.clientName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -46,7 +53,7 @@ export default function Home() {
         prompt(`Copie o link abaixo:`, shareUrl);
       }
     } catch (err: any) {
-      console.error(err);
+      console.error("Erro ao gerar link:", err);
       alert(err.message || "Erro ao gerar link de compartilhamento");
     }
   };

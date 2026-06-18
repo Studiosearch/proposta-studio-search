@@ -120,11 +120,10 @@ export default function ProposalPage() {
     if (!data?.id) return;
     setDeleting(true);
     try {
-      const { error } = await supabase
-        .from('proposals')
-        .delete()
-        .eq('id', data.id);
-      if (error) throw error;
+      const response = await fetch(`/api/proposals/${data.id}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Erro ao deletar');
       window.location.href = '/';
     } catch (e) {
       console.error(e);

@@ -6,8 +6,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Supabase Setup
-const supabaseUrl = process.env.SUPABASE_URL || "";
-const supabaseKey = process.env.SUPABASE_ANON_KEY || "";
+const supabaseUrl = process.env.SUPABASE_URL || "https://fqvhytxfbdxnabqsfapk.supabase.co";
+const supabaseKey = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxdmh5dHhmYmR4bmFicXNmYXBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NzQ3MzAsImV4cCI6MjA5MTI1MDczMH0.vHGMG--KjBJvVAJMWQ65ywEAP_igSUmIFhO_k_KAIrs";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const app = express();
@@ -47,6 +47,22 @@ app.get("/api/proposals/:id", async (req, res) => {
   } catch (err) {
     console.error("Load Error:", err);
     res.status(500).json({ error: "Erro ao carregar proposta." });
+  }
+});
+
+// API to delete proposal
+app.delete("/api/proposals/:id", async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from("proposals")
+      .delete()
+      .eq("id", req.params.id);
+
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Delete Error:", err);
+    res.status(500).json({ error: "Failed to delete proposal" });
   }
 });
 
